@@ -1,0 +1,85 @@
+<head>
+<title> XYZ Hotel Reservation/Cancellation -- Web Interface</title>
+</head>
+<body bgcolor="#b5ceff">
+
+<h1>XYZ Hotel Reservation/Cancelation </h1>
+
+<p> 
+<form action="http://localhost:3333" method=post>
+
+<input name="whattodo" type="radio"  value="reservation" checked ></input> RESERVATION <br>
+<table border="1">
+<tr>
+<th>Reservation Date:   </th>
+<th>
+ Month <select name="Rmonth">
+  <option>1</option>  <option>2</option>  <option>3</option>  <option>4</option>
+  <option>5</option>  <option>6</option>  <option>7</option>  <option>8</option>
+  <option>9</option>  <option>10</option>  <option>11</option>  <option>12</option> </select>
+ Day  <select name="Rday"> 
+  <option>1</option>   <option>2</option>   <option>3</option>   <option>4</option>
+  <option>5</option>   <option>6</option>   <option>7</option>   <option>8</option>
+  <option>9</option>   <option>10</option>  <option>11</option>  <option>12</option>
+  <option>13</option>  <option>14</option>  <option>15</option>  <option>16</option>  
+  <option>17</option>  <option>18</option>  <option>19</option>  <option>20</option>  
+  <option>21</option>  <option>22</option>  <option>23</option>  <option>24</option>  
+  <option>25</option>  <option>26</option>  <option>27</option>  <option>28</option>  
+  <option>29</option>  <option>30</option>  <option>31</option>    </select>
+ Year <select name="Ryear">
+  <option>2011</option>  <option>2012</option>  <option>2013</option> /select>
+ </th>
+</tr>
+<tr>
+<td>Account Number:     </td>
+<td> <input name="Raccountnumber"   value="" size=16></input></td>
+</tr>
+<tr>
+<td>Zip Code:     </td>
+<td>  <input name="Rzipcode" value="" size=5></input>  </td>
+</tr>
+</table>
+
+<br>
+------------------------------------------------
+<br><br>
+
+<input name="whattodo" type="radio"  value="cancelation" ></input> CANCELATION <br>
+
+<table border="1">
+<tr>
+<th>Reservation Date:   </th>
+<th>
+ Month <select name="Cmonth">
+  <option>1</option>  <option>2</option>  <option>3</option>  <option>4</option>
+  <option>5</option>  <option>6</option>  <option>7</option>  <option>8</option>
+  <option>9</option>  <option>10</option>  <option>11</option>  <option>12</option> </select>
+ Day  <select name="Cday"> 
+  <option>1</option>   <option>2</option>   <option>3</option>   <option>4</option>
+  <option>5</option>   <option>6</option>   <option>7</option>   <option>8</option>
+  <option>9</option>   <option>10</option>  <option>11</option>  <option>12</option>
+  <option>13</option>  <option>14</option>  <option>15</option>  <option>16</option>  
+  <option>17</option>  <option>18</option>  <option>19</option>  <option>20</option>  
+  <option>21</option>  <option>22</option>  <option>23</option>  <option>24</option>  
+  <option>25</option>  <option>26</option>  <option>27</option>  <option>28</option>  
+  <option>29</option>  <option>30</option>  <option>31</option>    </select>
+ Year <select name="Cyear">
+  <option>2011</option>  <option>2012</option>  <option>2013</option> /select>
+</th>
+</tr>
+<tr>
+<td>Room Number:     </td>
+<td> <input name="Croomnumber"   value="" size=2></input></td>
+</tr>
+<tr>
+<td>Confirmation Number:     </td>
+<td>  <input name="Cconfirmationnumber" value="" size=8></input>  </td>
+</tr>
+</table>
+
+<br>
+
+<input type=submit name="Action" value="Submit"></input>
+
+</form>
+</html>
