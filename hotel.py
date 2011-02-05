@@ -10,7 +10,7 @@ class Hotel:
         print "CREATING HOTEL"
         self.reserved = 0
         self.available = 30
-        self.date = [ 3, 21, 2011]
+        self.date = [3, 21, 2011]
 
     def check(self,r):
         request = dict(item.split("=") for item in r.split("&"))
@@ -85,14 +85,17 @@ class HotelThread(threading.Thread):
                 reply = infile.read()
                 print "REPLY:" , reply
                 self.server.send (reply)
+                self.server.close()
+                
             elif data[0:4] == "POST":
+                message = data.split('\n')
+                if len(message[-1]) < 10:
+                    data = self.server.recv(self.size)
                 reply ='HTTP/1.1 200 OK'
                 self.server.send (reply)
-                #data = self.server.recv(self.size)
-                message = data.split('\n')
+                self.server.close()
                 print "WHAT TO DO: ",message[-1]
                 self.hotel.check(message[-1])
-            self.server.close()
             running = 0
 
 if __name__ == "__main__":
