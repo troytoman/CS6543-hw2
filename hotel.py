@@ -5,6 +5,17 @@ import select
 import sys
 import threading
 
+class Hotel:
+    def __init__(self):
+        print "CREATING HOTEL"
+        self.reserved = 0
+        self.available = 30
+        self.date = [ 3, 21, 2011]
+
+    def check(self,r):
+        request = dict(item.split("=") for item in r.split("&"))
+        print "CHECKING RESERVATION", request
+
 class HotelServer:
     def __init__(self):
         self.host = ''
@@ -13,6 +24,7 @@ class HotelServer:
         self.size = 1024
         self.server = None
         self.threads = []
+        self.hotel = Hotel()
 
     def open_socket(self):
         try:
@@ -37,7 +49,7 @@ class HotelServer:
             for s in inputready:
                 if s == self.server:
                     # handle the server socket
-                    c = HotelThread(self.server.accept())
+                    c = HotelThread(self.hotel,self.server.accept())
                     c.start()
                     self.threads.append(c)
 
@@ -53,11 +65,12 @@ class HotelServer:
             t.join()
 
 class HotelThread(threading.Thread):
-    def __init__(self, (server, address)):
+    def __init__(self, hotel, (server, address)):
         threading.Thread.__init__(self)
         self.server = server
         self.address = address
         self.size = 1024
+        self.hotel = hotel
         print "I got a connection from ", self.address
 
     def run(self):
@@ -65,7 +78,7 @@ class HotelThread(threading.Thread):
         while running:
 
             data = self.server.recv(self.size)
-            print "RECEIVED: " , data
+            print "RECEIVED:" , data
 
             if data[0:3] == "GET":
                 infile = open('index.html', 'r')
@@ -73,14 +86,14 @@ class HotelThread(threading.Thread):
                 print "REPLY:" , reply
                 self.server.send (reply)
             elif data[0:4] == "POST":
-                reply =' HTTP/1.1 200 OK'
+                reply ='HTTP/1.1 200 OK'
                 self.server.send (reply)
-                data = self.server.recv(self.size)
-                message = data.partition("whattodo=")
-                print "WHAT TO DO: ", message[2]
-            else:
-                self.server.close()
-                running = 0
+                #data = self.server.recv(self.size)
+                message = data.split('\n')
+                print "WHAT TO DO: ",message[-1]
+                self.hotel.check(message[-1])
+            self.server.close()
+            running = 0
 
 if __name__ == "__main__":
     s = HotelServer()
