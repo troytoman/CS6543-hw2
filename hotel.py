@@ -1,31 +1,87 @@
 __author__ = 'troytoman'
 
-# Setup TCP Socket and listen on port 3333
 import socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(("", 3333))
+import select
+import sys
+import threading
 
-print "HotelServer Waiting for client on port 3333"
+class HotelServer:
+    def __init__(self):
+        self.host = ''
+        self.port = 3333
+        self.backlog = 5
+        self.size = 1024
+        self.server = None
+        self.threads = []
 
-while 1:
-    server_socket.listen(1)
-    client_socket, address = server_socket.accept()
-    print "I got a connection from ", address
+    def open_socket(self):
+        try:
+            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server.bind((self.host, self.port))
+            self.server.listen(self.backlog)
+            print "HotelServer Waiting for client on port 3333"
 
-    data = client_socket.recv(4096)
-            
-    print "RECEIVED: " , data
+        except socket.error, (value, message):
+            if self.server:
+                self.server.close()
+            print "Could not open socket: " + message
+            sys.exit(1)
 
-    if data[0:3] == "GET":
-        infile = open('index.html', 'r')
-        reply = infile.read()
-        print "REPLY:" , reply
-        client_socket.send (reply)
-    elif data[0:4] == "POST":
-        reply =' HTTP/1.1 200 OK'
-        client_socket.send (reply)
-        data = client_socket.recv(4096)
-        message = data.partition("whattodo=")
-        print "WHAT TO DO: ", message[2]
-    client_socket.close()
+    def run(self):
+        self.open_socket()
+        input = [self.server,sys.stdin]
+        running = 1
+        while running:
+            inputready,outputready,exceptready = select.select(input,[],[])
 
+            for s in inputready:
+                if s == self.server:
+                    # handle the server socket
+                    c = HotelThread(self.server.accept())
+                    c.start()
+                    self.threads.append(c)
+
+                elif s == sys.stdin:
+                    # check for keyboard input to shut the server down
+                    junk - sys.stdin.readline()
+                    running = 0
+
+        # close the sockets
+        self.server.close()
+        # wait for threads to finish
+        for t in self.threads:
+            t.join()
+
+class HotelThread(threading.Thread):
+    def __init__(self, (server, address)):
+        threading.Thread.__init__(self)
+        self.server = server
+        self.address = address
+        self.size = 1024
+        print "I got a connection from ", self.address
+
+    def run(self):
+        running = 1
+        while running:
+
+            data = self.server.recv(self.size)
+            print "RECEIVED: " , data
+
+            if data[0:3] == "GET":
+                infile = open('index.html', 'r')
+                reply = infile.read()
+                print "REPLY:" , reply
+                self.server.send (reply)
+            elif data[0:4] == "POST":
+                reply =' HTTP/1.1 200 OK'
+                self.server.send (reply)
+                data = self.server.recv(self.size)
+                message = data.partition("whattodo=")
+                print "WHAT TO DO: ", message[2]
+            else:
+                self.server.close()
+                running = 0
+
+if __name__ == "__main__":
+    s = HotelServer()
+    s.run()
