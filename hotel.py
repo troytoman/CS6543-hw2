@@ -91,7 +91,12 @@ class HotelThread(threading.Thread):
                 message = data.split('\n')
                 if len(message[-1]) < 10:
                     data = self.server.recv(self.size)
-                reply ='HTTP/1.1 200 OK'
+                reply_message = 'Reservation Received' + str(self.address)
+                reply = ('HTTP/1.1 200 OK\n' +
+                         'Date: Fri, 31 Dec 1999 23:59:59 GMT\n' +
+                         'Content-Type: text/plain\n' +
+                         'Content-Length: '+ str(len(reply_message)) + '\n\n' +
+                         reply_message)
                 self.server.send (reply)
                 self.server.close()
                 print "WHAT TO DO: ",message[-1]
