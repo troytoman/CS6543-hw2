@@ -14,7 +14,12 @@ class Hotel:
 
     def check(self,r):
         request = dict(item.split("=") for item in r.split("&"))
-        print "CHECKING RESERVATION", request
+        if request['whattodo'] == 'reservation':
+            print "CHECKING RESERVATION", request['Rmonth'], request['Rday'], request['Ryear']
+            reply_message = 'Reservation Received ' + request['Rmonth'] + '-' + request['Rday'] + '-' + request['Ryear']
+        else:
+            reply_message = 'Unsupported request'
+        return reply_message
 
 class HotelServer:
     def __init__(self):
@@ -55,7 +60,7 @@ class HotelServer:
 
                 elif s == sys.stdin:
                     # check for keyboard input to shut the server down
-                    junk - sys.stdin.readline()
+                    junk = sys.stdin.readline()
                     running = 0
 
         # close the sockets
@@ -78,12 +83,11 @@ class HotelThread(threading.Thread):
         while running:
 
             data = self.server.recv(self.size)
-            print "RECEIVED:" , data
+            # print "RECEIVED:" , data
 
             if data[0:3] == "GET":
                 infile = open('index.html', 'r')
                 reply = infile.read()
-                print "REPLY:" , reply
                 self.server.send (reply)
                 self.server.close()
                 
@@ -91,16 +95,15 @@ class HotelThread(threading.Thread):
                 message = data.split('\n')
                 if len(message[-1]) < 10:
                     data = self.server.recv(self.size)
-                reply_message = 'Reservation Received' + str(self.address)
+                print "WHAT TO DO: ",message[-1]
+                reply_message = self.hotel.check(message[-1])
                 reply = ('HTTP/1.1 200 OK\n' +
-                         'Date: Fri, 31 Dec 1999 23:59:59 GMT\n' +
                          'Content-Type: text/plain\n' +
                          'Content-Length: '+ str(len(reply_message)) + '\n\n' +
                          reply_message)
                 self.server.send (reply)
                 self.server.close()
-                print "WHAT TO DO: ",message[-1]
-                self.hotel.check(message[-1])
+
             running = 0
 
 if __name__ == "__main__":
