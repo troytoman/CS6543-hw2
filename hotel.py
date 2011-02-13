@@ -8,15 +8,22 @@ import threading
 class Hotel:
     def __init__(self):
         print "CREATING HOTEL"
-        self.reserved = 0
         self.available = 30
-        self.date = [3, 21, 2011]
+        self.date = ['3', '21', '2011']
 
     def check(self,r):
         request = dict(item.split("=") for item in r.split("&"))
         if request['whattodo'] == 'reservation':
             print "CHECKING RESERVATION", request['Rmonth'], request['Rday'], request['Ryear']
-            reply_message = 'Reservation Received ' + request['Rmonth'] + '-' + request['Rday'] + '-' + request['Ryear']
+            requested_date = [request['Rmonth'], request['Rday'], request['Ryear']]
+            if (requested_date == self.date) and (self.available > 0) :
+                reply_message = 'Reservation is confirmed. Confirmation #%d' % self.available
+                self.available -= 1
+            else:
+                reply_message = 'Reservation is not available'
+        if request['whattodo'] == 'cancelation':
+            print "CHECKING Cancellation", request['Cmonth'], request['Cday'], request['Cyear']
+            reply_message = 'Cancellation in process'
         else:
             reply_message = 'Unsupported request'
         return reply_message
