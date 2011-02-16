@@ -8,7 +8,7 @@ import threading
 class Bank:
     def __init__(self):
         print "CREATING BANK"
-        self.accounts = {'10': 50}  #todo flesh out rest of account list
+        self.accounts = {'10': 50, '11': 50, '12': 50, '13': 50, '14': 50, '15': 50}
 
     def debit(self,message):
 
@@ -26,7 +26,7 @@ class Bank:
 
     def credit(self, message):
         if self.accounts.has_key(message[1]):
-            self.accounts[message[1]] += message[2]
+            self.accounts[message[1]] += int(message[2])
             reply = 'OK'
         else:
             reply = 'ER Invalid Account Number'
@@ -37,7 +37,7 @@ class BankServer:
         # setup the default socket connection parameters
         self.host = ''
         #todo convert port number to be passed in at the command line
-        self.port = 3333
+        self.port = 4444
         self.backlog = 5
         self.size = 1024
         self.server = None   # create a placeholder for the socket
@@ -49,7 +49,7 @@ class BankServer:
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.bind((self.host, self.port))
             self.server.listen(self.backlog)
-            print "BankServer Waiting for client on port 3333" #todo change message with variable port
+            print "BankServer Waiting for client on port 4444" #todo change message with variable port
 
         except socket.error, (value, message):   # handle any socket errors with a message
             if self.server:
@@ -96,8 +96,6 @@ class BankThread(threading.Thread):
         print "I got a connection from ", self.address
 
     def run(self):
-        running = 1  #todo examine if this parameter is necessary since the thread just handles one request
-        while running:
 
             data = self.server.recv(self.size)
             message = data.split(' ')
@@ -114,8 +112,9 @@ class BankThread(threading.Thread):
                 print "Processing credit: " + data
                 self.server.close()
 
-            running = 0
-
+            
 if __name__ == "__main__":
     s = BankServer()
     s.run()
+
+    #todo comments throughout
